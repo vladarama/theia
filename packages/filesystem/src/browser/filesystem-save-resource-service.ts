@@ -71,7 +71,7 @@ export class FilesystemSaveResourceService extends SaveResourceService {
             await this.save(sourceWidget, options);
         } else if (selected) {
             try {
-                await this.copyAndSave(sourceWidget, selected, overwrite);
+                await this.copyAndSave(sourceWidget, selected, overwrite, options?.openAfterSave);
             } catch (e) {
                 console.warn(e);
             }
@@ -83,7 +83,7 @@ export class FilesystemSaveResourceService extends SaveResourceService {
      * @param target The new URI for the widget.
      * @param overwrite
      */
-    private async copyAndSave(sourceWidget: Widget & SaveableSource & Navigatable, target: URI, overwrite: boolean): Promise<void> {
+    private async copyAndSave(sourceWidget: Widget & SaveableSource & Navigatable, target: URI, overwrite: boolean, openAfterSave?: boolean): Promise<void> {
         const snapshot = sourceWidget.saveable.createSnapshot!();
         if (!await this.fileService.exists(target)) {
             const sourceUri = sourceWidget.getResourceUri()!;
@@ -93,8 +93,15 @@ export class FilesystemSaveResourceService extends SaveResourceService {
                 await this.fileService.createFile(target);
             }
         }
-        const targetWidget = await open(this.openerService, target, { widgetOptions: { ref: sourceWidget } });
-        const targetSaveable = Saveable.get(targetWidget);
+        let targetWidget;
+        let targetSaveable;
+        if (openAfterSave === false) {
+            targetWidget = await open(this.openerService, target, { widgetOptions: { ref: sourceWidget, mode: 'none' } });
+            targetSaveable = Saveable.get(target);
+        } else {
+            targetWidget = await open(this.openerService, target, { widgetOptions: { ref: sourceWidget } });
+            targetSaveable = Saveable.get(targetWidget);
+        }
         if (targetWidget && targetSaveable && targetSaveable.applySnapshot) {
             targetSaveable.applySnapshot(snapshot);
             await sourceWidget.saveable.revert!();

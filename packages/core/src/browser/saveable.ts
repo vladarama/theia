@@ -124,9 +124,13 @@ export namespace Saveable {
                 });
                 if (typeof result === 'boolean') {
                     if (result) {
-                        await (doSave?.(this) ?? Saveable.save(this));
+                        await (doSave?.(this, { openAfterSave: false }) ?? Saveable.save(this, { openAfterSave: false }));
+                        if (!isDirty(this)) {
+                            await this.closeWithoutSaving();
+                        }
+                    } else {
+                        await this.closeWithoutSaving();
                     }
-                    await this.closeWithoutSaving();
                 }
             } finally {
                 closing = false;
@@ -264,6 +268,10 @@ export interface SaveOptions {
      * Formatting type to apply when saving.
      */
     readonly formatType?: FormatType;
+    /**
+     * Open the widget after saving it
+     */
+    readonly openAfterSave?: boolean;
 }
 
 /**
