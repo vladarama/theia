@@ -32,7 +32,7 @@ import { LabelProvider, PreferenceService, QuickPickItem, QuickInputService, Com
 import { VscodeCommands } from '@theia/plugin-ext-vscode/lib/browser/plugin-vscode-commands-contribution';
 import { VSXExtensionsContextMenu, VSXExtension } from './vsx-extension';
 import { ClipboardService } from '@theia/core/lib/browser/clipboard-service';
-import { BUILTIN_QUERY, INSTALLED_QUERY, RECOMMENDED_QUERY } from './vsx-extensions-search-model';
+import { BUILTIN_QUERY, INSTALLED_QUERY, RECOMMENDED_QUERY, VSXExtensionsSearchModel } from './vsx-extensions-search-model';
 import { IGNORE_RECOMMENDATIONS_ID } from './recommended-extensions/recommended-extensions-preference-contribution';
 import { VSXExtensionsCommands } from './vsx-extension-commands';
 import { VSXExtensionRaw, OVSXApiFilter } from '@theia/ovsx-client';
@@ -42,6 +42,13 @@ export namespace VSXCommands {
     export const TOGGLE_EXTENSIONS: Command = {
         id: 'vsxExtensions.toggle',
     };
+}
+
+export enum VSXSorting {
+    INSTALL_COUNT,
+    RATING,
+    NAME,
+    PUBLISHED_DATE,
 }
 
 @injectable()
@@ -57,6 +64,7 @@ export class VSXExtensionsContribution extends AbstractViewContribution<VSXExten
     @inject(OVSXClientProvider) protected clientProvider: OVSXClientProvider;
     @inject(OVSXApiFilter) protected vsxApiFilter: OVSXApiFilter;
     @inject(QuickInputService) protected quickInput: QuickInputService;
+    @inject(VSXExtensionsSearchModel) protected searchModel: VSXExtensionsSearchModel;
 
     constructor() {
         super({
@@ -119,6 +127,22 @@ export class VSXExtensionsContribution extends AbstractViewContribution<VSXExten
 
         commands.registerCommand(VSXExtensionsCommands.SHOW_RECOMMENDATIONS, {
             execute: () => this.showRecommendedExtensions()
+        });
+
+        commands.registerCommand(VSXExtensionsCommands.SORT_BY_INSTALL_COUNT, {
+            execute: () => this.sortBy(VSXSorting.INSTALL_COUNT)
+        });
+
+        commands.registerCommand(VSXExtensionsCommands.SORT_BY_RATING, {
+            execute: () => this.sortBy(VSXSorting.RATING)
+        });
+
+        commands.registerCommand(VSXExtensionsCommands.SORT_BY_NAME, {
+            execute: () => this.sortBy(VSXSorting.NAME)
+        });
+
+        commands.registerCommand(VSXExtensionsCommands.SORT_BY_PUBLISHED_DATE, {
+            execute: () => this.sortBy(VSXSorting.PUBLISHED_DATE)
         });
     }
 
@@ -323,5 +347,24 @@ export class VSXExtensionsContribution extends AbstractViewContribution<VSXExten
     protected async showRecommendedExtensions(): Promise<void> {
         await this.openView({ activate: true });
         this.model.search.query = RECOMMENDED_QUERY;
+    }
+
+    protected async sortBy(sortBy: VSXSorting): Promise<void> {
+        switch (sortBy) {
+            case VSXSorting.INSTALL_COUNT:
+                this.searchModel.query = '@sort:installs ' + this.searchModel.query;
+                break;
+            case VSXSorting.RATING:
+                this.searchModel.query = '@sort:rating ' + this.searchModel.query;
+                break;
+            case VSXSorting.NAME:
+                this.searchModel.query = '@sort:name ' + this.searchModel.query;
+                break;
+            case VSXSorting.PUBLISHED_DATE:
+                this.searchModel.query = '@sort:publishedDate ' + this.searchModel.query;
+                break;
+            default:
+                break;
+        }
     }
 }

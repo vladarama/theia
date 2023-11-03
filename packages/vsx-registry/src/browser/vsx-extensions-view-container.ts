@@ -161,6 +161,10 @@ export class VSXExtensionsViewContainer extends ViewContainer {
 
     protected override updateToolbarItems(allParts: ViewContainerPart[]): void {
         super.updateToolbarItems(allParts);
+        this.registerToolbarItem(VSXExtensionsCommands.SORT_BY_INSTALL_COUNT.id, { tooltip: VSXExtensionsCommands.SORT_BY_INSTALL_COUNT.label, group: 'other_0' });
+        this.registerToolbarItem(VSXExtensionsCommands.SORT_BY_RATING.id, { tooltip: VSXExtensionsCommands.SORT_BY_RATING.label, group: 'other_0' });
+        this.registerToolbarItem(VSXExtensionsCommands.SORT_BY_NAME.id, { tooltip: VSXExtensionsCommands.SORT_BY_NAME.label, group: 'other_0' });
+        this.registerToolbarItem(VSXExtensionsCommands.SORT_BY_PUBLISHED_DATE.id, { tooltip: VSXExtensionsCommands.SORT_BY_PUBLISHED_DATE.label, group: 'other_0' });
         this.registerToolbarItem(VSXExtensionsCommands.INSTALL_FROM_VSIX.id, { tooltip: VSXExtensionsCommands.INSTALL_FROM_VSIX.label, group: 'other_1' });
         this.registerToolbarItem(VSXExtensionsCommands.CLEAR_ALL.id, { tooltip: VSXExtensionsCommands.CLEAR_ALL.label, priority: 1, onDidChange: this.model.onDidChange });
     }

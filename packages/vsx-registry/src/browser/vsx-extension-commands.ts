@@ -60,4 +60,24 @@ export namespace VSXExtensionsCommands {
         label: 'Show Recommended Extensions',
         category: EXTENSIONS_CATEGORY,
     });
+    export const SORT_BY_INSTALL_COUNT = Command.toDefaultLocalizedCommand({
+        id: 'vsxExtension.sortByInstallCount',
+        label: 'Sort By Install Count',
+        category: EXTENSIONS_CATEGORY,
+    });
+    export const SORT_BY_RATING = Command.toDefaultLocalizedCommand({
+        id: 'vsxExtension.sortByRating',
+        label: 'Sort By Rating',
+        category: EXTENSIONS_CATEGORY,
+    });
+    export const SORT_BY_NAME = Command.toDefaultLocalizedCommand({
+        id: 'vsxExtension.sortByName',
+        label: 'Sort By Name',
+        category: EXTENSIONS_CATEGORY,
+    });
+    export const SORT_BY_PUBLISHED_DATE = Command.toDefaultLocalizedCommand({
+        id: 'vsxExtension.sortByPublishedDate',
+        label: 'Sort By Published Date',
+        category: EXTENSIONS_CATEGORY,
+    });
 }
