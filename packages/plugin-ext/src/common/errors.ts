@@ -18,7 +18,7 @@ import { isObject } from '@theia/core/lib/common/types';
 
 export function illegalArgument(message?: string): Error {
     if (message) {
-        return new Error(`Illegal argument: ${message}`);
+        return new Error(`Illegal arguments: ${message}`);
     } else {
         return new Error('Illegal argument');
     }
